@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - shell: bash
     - uses: actions/checkout@v2
-    - name: Build the Docker image
+    - name: build
+      run: docker build . --file Dockerfile --tag tirex003/youtube-dl
+    - name: push
       run: |
-        docker build . --file Dockerfile --tag tirex003/youtube-dl
         docker login -u $DOCKER_LOGIN -p $DOCKER_SECRET
         docker push tirex003/youtube-dl:latest
       env:
