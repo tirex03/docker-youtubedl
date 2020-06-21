@@ -1,0 +1,27 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 */7 * *'
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - shell: bash
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: |
+        docker build . --file Dockerfile --tag tirex003/youtube-dl
+        docker login -u $DOCKER_LOGIN -p $DOCKER_SECRET
+        docker push tirex003/youtube-dl:latest
+      env:
+        DOCKER_LOGIN: ${{ secrets.DOCKER_LOGIN }}
+        DOCKER_SECRET: ${{ secrets.DOCKER_SECRET }}
+        
