@@ -17,6 +17,25 @@ jobs:
     - uses: actions/checkout@v2
     - name: build
       run: docker build . --file Dockerfile --tag tirex003/youtube-dl
+    - name: test
+      run: |
+        datapath=$(pwd)/youtubedata
+        mkdir $datapath
+        docker run -v "$datapath":/data tirex003/youtube-dl \
+        -f bestvideo+bestaudio \
+        --merge-output-format mkv \
+        --prefer-ffmpeg --write-sub \
+        --embed-subs \
+        --all-subs \
+        --convert-subs srt \
+        --add-metadata \
+        --write-description \
+        --write-thumbnail \
+        --geo-bypass \
+        --external-downloader aria2c \
+        --external-downloader-args '-c -j 5 -x 5 -s 5 -k 1M' \
+        "https://www.youtube.com/watch?v=RtTYQuO1j6w"
+        
     - name: push
       run: |
         docker login -u $DOCKER_LOGIN -p $DOCKER_SECRET
